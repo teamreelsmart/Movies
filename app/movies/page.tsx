@@ -32,8 +32,8 @@ function MoviesContent() {
   const [genres, setGenres] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGenre, setSelectedGenre] = useState(searchParams.get('genre') || '');
-  const [selectedLanguage, setSelectedLanguage] = useState(searchParams.get('language') || '');
+  const [selectedGenre, setSelectedGenre] = useState(searchParams.get('genre') || 'all');
+  const [selectedLanguage, setSelectedLanguage] = useState(searchParams.get('language') || 'all');
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'createdAt');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -47,8 +47,8 @@ function MoviesContent() {
         params.append('page', page.toString());
         params.append('sort', sortBy);
         params.append('type', 'movie');
-        if (selectedGenre) params.append('genre', selectedGenre);
-        if (selectedLanguage) params.append('language', selectedLanguage);
+        if (selectedGenre && selectedGenre !== 'all') params.append('genre', selectedGenre);
+        if (selectedLanguage && selectedLanguage !== 'all') params.append('language', selectedLanguage);
 
         const res = await fetch(`/api/movies?${params}`);
         const data = await res.json();
@@ -104,7 +104,7 @@ function MoviesContent() {
                     <SelectValue placeholder="Select genre" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="">All Genres</SelectItem>
+                    <SelectItem value="all">All Genres</SelectItem>
                     {genres.map((genre) => (
                       <SelectItem key={genre} value={genre}>
                         {genre}
@@ -120,7 +120,7 @@ function MoviesContent() {
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="">All Languages</SelectItem>
+                    <SelectItem value="all">All Languages</SelectItem>
                     {languages.map((lang) => (
                       <SelectItem key={lang} value={lang}>
                         {lang}

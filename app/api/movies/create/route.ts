@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     // Send Telegram notification
     const movieUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/movie/${slug}`;
-    await sendTelegramNotification(
+    const telegramSent = await sendTelegramNotification(
       data.title,
       data.storyline,
       data.posterUrl,
@@ -48,7 +48,10 @@ export async function POST(req: NextRequest) {
       data.type
     );
 
-    return NextResponse.json(movie, { status: 201 });
+    return NextResponse.json({
+      ...movie.toObject(),
+      telegramNotificationSent: telegramSent,
+    }, { status: 201 });
   } catch (error) {
     console.error('Movie creation error:', error);
     return NextResponse.json(
