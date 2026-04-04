@@ -223,30 +223,29 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
                 )}
               </div>
             </div>
-          </div>
-        </div>
 
-          {/* Download Section */}
-          {movie.type === 'movie' ? (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Download</h3>
-              <DownloadSection links={movie.downloadLinks} />
-            </div>
-          ) : (
-            movie.seasons && movie.seasons.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
-                <SeasonsSection seasons={movie.seasons} />
+            {/* Download Section */}
+            {movie.type === 'movie' ? (
+              <div className="mt-8 space-y-4 border-t border-border pt-8">
+                <h3 className="text-lg font-semibold text-foreground">Download</h3>
+                <DownloadSection links={movie.downloadLinks} />
               </div>
-            )
-          )}
+            ) : (
+              movie.seasons && movie.seasons.length > 0 && (
+                <div className="mt-8 space-y-4 border-t border-border pt-8">
+                  <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
+                  <SeasonsSection seasons={movie.seasons} />
+                </div>
+              )
+            )}
 
-          {/* Screenshots */}
-          {movie.screenshots && movie.screenshots.length > 0 && (
-            <div className="border-t border-border pt-8">
-              <ScreenshotsGallery screenshots={movie.screenshots} title={movie.title} />
-            </div>
-          )}
+            {/* Screenshots */}
+            {movie.screenshots && movie.screenshots.length > 0 && (
+              <div className="mt-8 border-t border-border pt-8">
+                <ScreenshotsGallery screenshots={movie.screenshots} title={movie.title} />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Recommended Movies */}
@@ -255,7 +254,10 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
             <RecommendedMovies genres={movie.genres} currentMovieSlug={movie.slug} />
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
+    </div>
 
       <Footer />
     </div>
