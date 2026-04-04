@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { FieldGroup, Field, FieldLabel, FieldHint } from '@/components/ui/field';
+import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Trash2 } from 'lucide-react';
 
