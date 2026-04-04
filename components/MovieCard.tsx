@@ -4,16 +4,19 @@ import { Star } from 'lucide-react';
 
 interface MovieCardProps {
   title: string;
-  slug: string;
+  slug?: string;
   posterUrl: string;
   imdbRating: number;
   type: 'movie' | 'series';
   views?: number;
 }
 
-export function MovieCard({ title, slug, posterUrl, imdbRating, type, views }: MovieCardProps) {
+export function MovieCard({ title, slug, posterUrl, imdbRating, type }: MovieCardProps) {
+  const canOpenDetail = Boolean(slug);
+  const href = canOpenDetail ? `/movie/${encodeURIComponent(slug!)}` : '#';
+
   return (
-    <Link href={`/movie/${slug}`}>
+    <Link href={href} aria-disabled={!canOpenDetail} className={!canOpenDetail ? 'pointer-events-none' : ''}>
       <div className="group relative overflow-hidden rounded-lg bg-card transition-transform duration-300 hover:scale-105 cursor-pointer">
         <div className="aspect-[2/3] relative bg-muted">
           <Image

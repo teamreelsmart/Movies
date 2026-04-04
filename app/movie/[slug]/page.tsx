@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Button } from '@/components/ui/button';
 import { DownloadSection } from '@/components/DownloadSection';
 import { SeasonsSection } from '@/components/SeasonsSection';
 import { ScreenshotsGallery } from '@/components/ScreenshotsGallery';
@@ -50,18 +50,26 @@ interface Movie {
   views: number;
 }
 
-export default function MovieDetailPage({ params }: { params: { slug: string } }) {
+export default function MovieDetailPage() {
+  const params = useParams<{ slug?: string }>();
+  const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
+
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSeason, setSelectedSeason] = useState<number>(1);
   const [relatedMovies, setRelatedMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
+    if (!slug) {
+      setLoading(false);
+      return;
+    }
+
     const fetchMovie = async () => {
       try {
-        const res = await fetch(`/api/movies/${params.slug}`);
+        const safeSlug = encodeURIComponent(slug);
+        const res = await fetch(`/api/movies/${safeSlug}`);
         if (!res.ok) {
-          throw new Error('Movie or Series not found');
+          throw new Error('Movie not found');
         }
         const data = await res.json();
         setMovie(data);
@@ -74,7 +82,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
           );
           const relData = await relRes.json();
           setRelatedMovies(
-            (relData.movies || []).filter((m: Movie) => m.slug !== params.slug).slice(0, 5)
+            (relData.movies || []).filter((m: Movie) => m.slug !== data.slug).slice(0, 5)
           );
         }
       } catch (error) {
@@ -85,7 +93,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
     };
 
     fetchMovie();
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -110,8 +118,6 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
       </div>
     );
   }
-
-  const currentSeason = movie.seasons?.find((s) => s.seasonNumber === selectedSeason);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
