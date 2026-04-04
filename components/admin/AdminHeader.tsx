@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -31,8 +32,8 @@ export function AdminHeader() {
     <header className="border-b border-border bg-card">
       <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-lg text-primary">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent"></div>
-          <span>OrvixMovies Admin</span>
+          <Image src="/logo.svg" alt="Movies Entertainment logo" width={34} height={34} />
+          <span>Movies Entertainment Admin</span>
         </Link>
 
         <nav className="hidden gap-6 md:flex">

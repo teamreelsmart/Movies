@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Send, Github, Mail } from 'lucide-react';
@@ -50,8 +51,8 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2 font-bold text-lg text-primary mb-4">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent"></div>
-              <span>OrvixMovies</span>
+              <Image src="/logo.svg" alt="Movies Entertainment logo" width={34} height={34} />
+              <span>Movies Entertainment</span>
             </div>
             <p className="text-sm text-foreground/60">
               Download your favorite movies and web series in HD quality.
@@ -99,7 +100,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-foreground/60">
-          <p>&copy; {new Date().getFullYear()} OrvixMovies. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Movies Entertainment. All rights reserved.</p>
         </div>
       </div>
     </footer>

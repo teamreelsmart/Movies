@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { SearchBox } from './SearchBox';
 import { Menu } from 'lucide-react';
@@ -12,8 +13,8 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary flex-shrink-0">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent"></div>
-          <span className="hidden sm:inline">OrvixMovies</span>
+          <Image src="/logo.svg" alt="Movies Entertainment logo" width={34} height={34} priority />
+          <span className="hidden sm:inline">Movies Entertainment</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -36,12 +37,6 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-          <Link
-            href="/admin"
-            className="hidden rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition-opacity sm:inline-flex"
-          >
-            Admin
-          </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="rounded-lg p-2 hover:bg-card transition-colors md:hidden"
@@ -78,13 +73,6 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Request
-            </Link>
-            <Link
-              href="/admin"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Admin Panel
             </Link>
           </nav>
         </div>

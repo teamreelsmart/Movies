@@ -5,7 +5,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { FieldGroup, Field, FieldLabel, FieldHint } from '@/components/ui/field';
+import { FieldGroup, Field, FieldLabel, FieldDescription } from '@/components/ui/field';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RequestPage() {
@@ -89,7 +89,7 @@ export default function RequestPage() {
                     required
                     className="bg-background border-border"
                   />
-                  <FieldHint>The name of the movie or series you want</FieldHint>
+                  <FieldDescription>The name of the movie or series you want</FieldDescription>
                 </Field>
               </FieldGroup>
 
@@ -107,7 +107,7 @@ export default function RequestPage() {
                     required
                     className="bg-background border-border"
                   />
-                  <FieldHint>The year it was released or will be released</FieldHint>
+                  <FieldDescription>The year it was released or will be released</FieldDescription>
                 </Field>
               </FieldGroup>
 
@@ -123,7 +123,7 @@ export default function RequestPage() {
                     onChange={handleChange}
                     className="bg-background border-border"
                   />
-                  <FieldHint>A screenshot or poster image URL for reference</FieldHint>
+                  <FieldDescription>A screenshot or poster image URL for reference</FieldDescription>
                 </Field>
               </FieldGroup>
 

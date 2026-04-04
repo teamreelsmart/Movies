@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -41,7 +42,7 @@ export default function AdminLoginPage() {
 
       toast({
         title: 'Login successful!',
-        description: 'Welcome to OrvixMovies Admin Panel',
+        description: 'Welcome to Movies Entertainment Admin Panel',
       });
 
       router.push('/admin');
@@ -61,10 +62,10 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="rounded-lg border border-border bg-card p-8">
           <div className="mb-8 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary to-accent"></div>
+            <div className="mb-4 flex justify-center">
+              <Image src="/logo.svg" alt="Movies Entertainment logo" width={70} height={70} priority />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">OrvixMovies</h1>
+            <h1 className="text-2xl font-bold text-foreground">Movies Entertainment</h1>
             <p className="mt-2 text-sm text-foreground/60">Admin Panel Login</p>
           </div>
 
@@ -105,13 +106,6 @@ export default function AdminLoginPage() {
               {loading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
-
-          <div className="mt-6 rounded-lg border border-border bg-background/50 p-4 text-center text-xs text-foreground/60">
-            <p>Demo Credentials:</p>
-            <p className="mt-1">Username: <code className="text-primary">admin</code></p>
-            <p>Password: <code className="text-primary">admin123</code></p>
-            <p className="mt-2 text-xs">Change these in your environment variables in production</p>
-          </div>
         </div>
       </div>
     </div>
