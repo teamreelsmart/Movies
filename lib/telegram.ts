@@ -86,8 +86,24 @@ export async function sendTelegramNotification(
     });
 
     if (!response.ok) {
-      console.error('Failed to send Telegram message:', await response.text());
-      return false;
+      const errorBody = await response.text();
+      console.error('Failed to send Telegram photo, falling back to text message:', errorBody);
+
+      // Fallback: send as plain text if Telegram rejects image URL/photo payload
+      const plainMessage = [
+        `🎬 New ${type === 'movie' ? 'Movie' : 'Series'} Added!`,
+        `📌 ${title}`,
+        `📝 ${storyline.substring(0, 200)}...`,
+        `🔗 ${movieUrl}`,
+      ].join('\n\n');
+
+      await callTelegramApi('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text: plainMessage,
+        disable_web_page_preview: false,
+      });
+
+      return true;
     }
 
     return true;

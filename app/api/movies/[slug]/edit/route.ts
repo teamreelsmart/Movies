@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Movie } from '@/lib/models/Movie';
 import { getAuthPayload } from '@/lib/auth';
+import { generateSlug } from '@/lib/utils-server';
+
+async function findMovieBySlug(rawSlug: string) {
+  const decodedSlug = decodeURIComponent(rawSlug || '').trim();
+  const normalizedSlug = generateSlug(decodedSlug);
+
+  return Movie.findOne({
+    $or: [
+      { slug: decodedSlug },
+      { slug: normalizedSlug },
+      { slug: { $regex: `^${decodedSlug}$`, $options: 'i' } },
+      { slug: { $regex: `^${normalizedSlug}$`, $options: 'i' } },
+    ],
+  });
+}
 
 export async function PUT(
   request: NextRequest,
@@ -9,9 +24,8 @@ export async function PUT(
 ) {
   try {
     const { slug } = await context.params;
-    
-    // Check authentication
-    const auth = getAuthPayload(request);
+
+    const auth = await getAuthPayload();
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -19,19 +33,20 @@ export async function PUT(
     await connectDB();
 
     const data = await request.json();
+    const existing = await findMovieBySlug(slug);
 
-    const movie = await Movie.findOneAndUpdate(
-      { slug },
+    if (!existing) {
+      return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
+    }
+
+    const movie = await Movie.findByIdAndUpdate(
+      existing._id,
       {
         ...data,
         updatedAt: new Date(),
       },
       { new: true }
     );
-
-    if (!movie) {
-      return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
-    }
 
     return NextResponse.json(movie);
   } catch (error) {
@@ -50,19 +65,19 @@ export async function DELETE(
   try {
     const { slug } = await context.params;
 
-    // Check authentication
-    const auth = getAuthPayload(request);
+    const auth = await getAuthPayload();
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await connectDB();
+    const existing = await findMovieBySlug(slug);
 
-    const movie = await Movie.findOneAndDelete({ slug });
-
-    if (!movie) {
+    if (!existing) {
       return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
     }
+
+    await Movie.findByIdAndDelete(existing._id);
 
     return NextResponse.json({ message: 'Movie deleted successfully' });
   } catch (error) {

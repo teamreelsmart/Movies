@@ -61,7 +61,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
       try {
         const res = await fetch(`/api/movies/${params.slug}`);
         if (!res.ok) {
-          throw new Error('Movie not found');
+          throw new Error('Movie or Series not found');
         }
         const data = await res.json();
         setMovie(data);
@@ -104,7 +104,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
       <div className="flex flex-col min-h-screen bg-background">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-foreground/60">Movie not found</p>
+          <p className="text-foreground/60">Movie or Series not found</p>
         </div>
         <Footer />
       </div>
