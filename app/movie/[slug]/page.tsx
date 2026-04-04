@@ -258,8 +258,5 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
 
       <Footer />
     </div>
-
-      <Footer />
-    </div>
   );
 }
