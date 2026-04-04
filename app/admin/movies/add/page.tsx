@@ -33,6 +33,9 @@ function AddMovieContent() {
   const isSeries = searchParams.get('type') === 'series';
   const [loading, setLoading] = useState(false);
 
+  const [selectedSeasonNumber, setSelectedSeasonNumber] = useState(1);
+  const [selectedEpisodeNumber, setSelectedEpisodeNumber] = useState(1);
+
   const [formData, setFormData] = useState({
     title: '',
     storyline: '',
@@ -86,6 +89,194 @@ function AddMovieContent() {
       ...prev,
       [field]: (prev[field as keyof typeof prev] as any[]).filter((_, i) => i !== index),
     }));
+  };
+
+
+  const selectedSeason = formData.seasons.find((s) => s.seasonNumber === selectedSeasonNumber);
+  const selectedEpisode = selectedSeason?.episodes.find(
+    (e) => e.episodeNumber === selectedEpisodeNumber
+  );
+
+  const addSeason = () => {
+    const nextSeasonNumber =
+      formData.seasons.length > 0
+        ? Math.max(...formData.seasons.map((s) => s.seasonNumber)) + 1
+        : 1;
+
+    const nextSeasons = [
+      ...formData.seasons,
+      {
+        seasonNumber: nextSeasonNumber,
+        episodes: [
+          {
+            episodeNumber: 1,
+            title: '',
+            downloadLinks: [{ title: '', size: '', url: '' }],
+          },
+        ],
+      },
+    ];
+
+    handleChange('seasons', nextSeasons);
+    setSelectedSeasonNumber(nextSeasonNumber);
+    setSelectedEpisodeNumber(1);
+  };
+
+  const addEpisodeToSeason = (seasonNumber: number) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+
+      const nextEpisodeNumber =
+        season.episodes.length > 0
+          ? Math.max(...season.episodes.map((e) => e.episodeNumber)) + 1
+          : 1;
+
+      return {
+        ...season,
+        episodes: [
+          ...season.episodes,
+          {
+            episodeNumber: nextEpisodeNumber,
+            title: '',
+            downloadLinks: [{ title: '', size: '', url: '' }],
+          },
+        ],
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
+    setSelectedEpisodeNumber(
+      nextSeasons.find((s) => s.seasonNumber === seasonNumber)?.episodes.slice(-1)[0]?.episodeNumber || 1
+    );
+  };
+
+  const removeSeason = (seasonNumber: number) => {
+    const nextSeasons = formData.seasons.filter((s) => s.seasonNumber !== seasonNumber);
+    handleChange('seasons', nextSeasons);
+
+    if (!nextSeasons.length) {
+      setSelectedSeasonNumber(1);
+      setSelectedEpisodeNumber(1);
+      return;
+    }
+
+    const fallbackSeason = nextSeasons[0];
+    setSelectedSeasonNumber(fallbackSeason.seasonNumber);
+    setSelectedEpisodeNumber(fallbackSeason.episodes[0]?.episodeNumber || 1);
+  };
+
+  const removeEpisode = (seasonNumber: number, episodeNumber: number) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+      return {
+        ...season,
+        episodes: season.episodes.filter((e) => e.episodeNumber !== episodeNumber),
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
+    const fallbackEpisode =
+      nextSeasons
+        .find((s) => s.seasonNumber === seasonNumber)
+        ?.episodes[0]?.episodeNumber || 1;
+    setSelectedEpisodeNumber(fallbackEpisode);
+  };
+
+  const updateEpisodeField = (
+    seasonNumber: number,
+    episodeNumber: number,
+    field: 'title' | 'episodeNumber',
+    value: string | number
+  ) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+
+      return {
+        ...season,
+        episodes: season.episodes.map((episode) =>
+          episode.episodeNumber === episodeNumber
+            ? {
+                ...episode,
+                [field]: value,
+              }
+            : episode
+        ),
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
+  };
+
+  const updateEpisodeDownloadLink = (
+    seasonNumber: number,
+    episodeNumber: number,
+    linkIndex: number,
+    field: keyof DownloadLink,
+    value: string
+  ) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+
+      return {
+        ...season,
+        episodes: season.episodes.map((episode) => {
+          if (episode.episodeNumber !== episodeNumber) return episode;
+
+          return {
+            ...episode,
+            downloadLinks: episode.downloadLinks.map((link, idx) =>
+              idx === linkIndex ? { ...link, [field]: value } : link
+            ),
+          };
+        }),
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
+  };
+
+  const addEpisodeDownloadLink = (seasonNumber: number, episodeNumber: number) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+
+      return {
+        ...season,
+        episodes: season.episodes.map((episode) =>
+          episode.episodeNumber === episodeNumber
+            ? {
+                ...episode,
+                downloadLinks: [...episode.downloadLinks, { title: '', size: '', url: '' }],
+              }
+            : episode
+        ),
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
+  };
+
+  const removeEpisodeDownloadLink = (
+    seasonNumber: number,
+    episodeNumber: number,
+    linkIndex: number
+  ) => {
+    const nextSeasons = formData.seasons.map((season) => {
+      if (season.seasonNumber !== seasonNumber) return season;
+
+      return {
+        ...season,
+        episodes: season.episodes.map((episode) =>
+          episode.episodeNumber === episodeNumber
+            ? {
+                ...episode,
+                downloadLinks: episode.downloadLinks.filter((_, idx) => idx !== linkIndex),
+              }
+            : episode
+        ),
+      };
+    });
+
+    handleChange('seasons', nextSeasons);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -334,7 +525,7 @@ function AddMovieContent() {
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <h2 className="text-xl font-semibold text-foreground">
-                  {isSeries ? 'Download Links (for trailer)' : 'Download Links'} *
+                  {isSeries ? 'Combined Series Download Links (Optional)' : 'Download Links'}
                 </h2>
                 <Button
                   type="button"
@@ -391,6 +582,202 @@ function AddMovieContent() {
                 </div>
               ))}
             </div>
+
+
+            {isSeries && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <h2 className="text-xl font-semibold text-foreground">Seasons & Episodes</h2>
+                  <Button type="button" onClick={addSeason} size="sm" variant="outline">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Season
+                  </Button>
+                </div>
+
+                {formData.seasons.length > 0 && (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel htmlFor="selectedSeason">Select Season</FieldLabel>
+                        <select
+                          id="selectedSeason"
+                          value={selectedSeasonNumber}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setSelectedSeasonNumber(value);
+                            const fallbackEpisode =
+                              formData.seasons.find((s) => s.seasonNumber === value)?.episodes[0]
+                                ?.episodeNumber || 1;
+                            setSelectedEpisodeNumber(fallbackEpisode);
+                          }}
+                          className="w-full rounded-md bg-background border border-border px-3 py-2 text-foreground"
+                        >
+                          {formData.seasons.map((season) => (
+                            <option key={season.seasonNumber} value={season.seasonNumber}>
+                              Season {season.seasonNumber}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                    </FieldGroup>
+
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel htmlFor="selectedEpisode">Select Episode</FieldLabel>
+                        <select
+                          id="selectedEpisode"
+                          value={selectedEpisodeNumber}
+                          onChange={(e) => setSelectedEpisodeNumber(Number(e.target.value))}
+                          className="w-full rounded-md bg-background border border-border px-3 py-2 text-foreground"
+                        >
+                          {(selectedSeason?.episodes || []).map((episode) => (
+                            <option key={episode.episodeNumber} value={episode.episodeNumber}>
+                              Episode {episode.episodeNumber}{episode.title ? ` - ${episode.title}` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                    </FieldGroup>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => addEpisodeToSeason(selectedSeasonNumber)}
+                    disabled={!selectedSeason}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Episode
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive hover:bg-destructive/10"
+                    onClick={() => removeSeason(selectedSeasonNumber)}
+                    disabled={formData.seasons.length <= 1}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove Season
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive hover:bg-destructive/10"
+                    onClick={() => removeEpisode(selectedSeasonNumber, selectedEpisodeNumber)}
+                    disabled={!selectedSeason || (selectedSeason?.episodes.length || 0) <= 1}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove Episode
+                  </Button>
+                </div>
+
+                {selectedEpisode && (
+                  <div className="space-y-4 rounded-lg border border-border bg-background/50 p-4">
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel htmlFor="episodeTitle">Episode Title</FieldLabel>
+                        <Input
+                          id="episodeTitle"
+                          value={selectedEpisode.title}
+                          onChange={(e) =>
+                            updateEpisodeField(
+                              selectedSeasonNumber,
+                              selectedEpisodeNumber,
+                              'title',
+                              e.target.value,
+                            )
+                          }
+                          className="bg-background border-border"
+                          placeholder="Episode name"
+                        />
+                      </Field>
+                    </FieldGroup>
+
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-foreground">Episode Download Links</h3>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => addEpisodeDownloadLink(selectedSeasonNumber, selectedEpisodeNumber)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Link
+                      </Button>
+                    </div>
+
+                    {selectedEpisode.downloadLinks.map((link, idx) => (
+                      <div key={idx} className="space-y-2 rounded-lg border border-border bg-card p-3">
+                        <Input
+                          value={link.title}
+                          onChange={(e) =>
+                            updateEpisodeDownloadLink(
+                              selectedSeasonNumber,
+                              selectedEpisodeNumber,
+                              idx,
+                              'title',
+                              e.target.value,
+                            )
+                          }
+                          className="bg-background border-border"
+                          placeholder="Link title"
+                        />
+                        <div className="grid gap-2 md:grid-cols-2">
+                          <Input
+                            value={link.size}
+                            onChange={(e) =>
+                              updateEpisodeDownloadLink(
+                                selectedSeasonNumber,
+                                selectedEpisodeNumber,
+                                idx,
+                                'size',
+                                e.target.value,
+                              )
+                            }
+                            className="bg-background border-border"
+                            placeholder="File size"
+                          />
+                          <Input
+                            type="url"
+                            value={link.url}
+                            onChange={(e) =>
+                              updateEpisodeDownloadLink(
+                                selectedSeasonNumber,
+                                selectedEpisodeNumber,
+                                idx,
+                                'url',
+                                e.target.value,
+                              )
+                            }
+                            className="bg-background border-border"
+                            placeholder="Download URL"
+                          />
+                        </div>
+                        {selectedEpisode.downloadLinks.length > 1 && (
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              removeEpisodeDownloadLink(selectedSeasonNumber, selectedEpisodeNumber, idx)
+                            }
+                            size="sm"
+                            variant="ghost"
+                            className="text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Remove Link
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Screenshots */}
             <div className="space-y-4">

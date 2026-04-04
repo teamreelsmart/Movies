@@ -249,12 +249,20 @@ export default function MovieDetailPage() {
                 <DownloadSection links={movie.downloadLinks} />
               </div>
             ) : (
-              movie.seasons && movie.seasons.length > 0 && (
-                <div className="mt-8 space-y-4 border-t border-border pt-8">
-                  <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
-                  <SeasonsSection seasons={movie.seasons} />
-                </div>
-              )
+              <>
+                {movie.downloadLinks && movie.downloadLinks.length > 0 && (
+                  <div className="mt-8 space-y-4 border-t border-border pt-8">
+                    <h3 className="text-lg font-semibold text-foreground">Combined Series Download</h3>
+                    <DownloadSection links={movie.downloadLinks} />
+                  </div>
+                )}
+                {movie.seasons && movie.seasons.length > 0 && (
+                  <div className="mt-8 space-y-4 border-t border-border pt-8">
+                    <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
+                    <SeasonsSection seasons={movie.seasons} />
+                  </div>
+                )}
+              </>
             )}
 
             {/* Screenshots */}
