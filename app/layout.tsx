@@ -7,9 +7,9 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'OrvixMovies - Download Movies & Series in HD',
+  description: 'Watch and download HD movies and web series. Latest releases, trending content, and more on OrvixMovies.',
+  generator: 'OrvixMovies',
   icons: {
     icon: [
       {
