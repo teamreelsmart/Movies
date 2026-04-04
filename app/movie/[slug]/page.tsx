@@ -5,16 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { MovieCard } from '@/components/MovieCard';
 import { Button } from '@/components/ui/button';
-import { Download, Star, Calendar, Clock, Globe } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { DownloadSection } from '@/components/DownloadSection';
+import { SeasonsSection } from '@/components/SeasonsSection';
+import { ScreenshotsGallery } from '@/components/ScreenshotsGallery';
+import { RecommendedMovies } from '@/components/RecommendedMovies';
+import { MovieDetailSkeleton } from '@/components/MovieCardSkeleton';
+import { Star, Calendar, Clock, Globe } from 'lucide-react';
 
 interface DownloadLink {
   title: string;
@@ -94,9 +91,9 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
     return (
       <div className="flex flex-col min-h-screen bg-background">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-foreground/60">Loading...</p>
-        </div>
+        <main className="flex-1 container max-w-7xl mx-auto px-4 py-12">
+          <MovieDetailSkeleton />
+        </main>
         <Footer />
       </div>
     );
@@ -229,139 +226,36 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
           </div>
         </div>
 
-        {/* Download Section */}
-        <div className="border-t border-border bg-card/50 px-4 py-12 sm:px-6 lg:px-8">
-          <div className="container max-w-7xl mx-auto">
-            <h2 className="mb-8 text-2xl font-bold text-foreground">Download</h2>
-
-            {movie.type === 'movie' ? (
-              // Movie Downloads
+          {/* Download Section */}
+          {movie.type === 'movie' ? (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground">Download</h3>
+              <DownloadSection links={movie.downloadLinks} />
+            </div>
+          ) : (
+            movie.seasons && movie.seasons.length > 0 && (
               <div className="space-y-4">
-                {movie.downloadLinks.length > 0 ? (
-                  movie.downloadLinks.map((link, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between rounded-lg border border-border bg-card p-4 hover:border-primary transition-colors"
-                    >
-                      <div>
-                        <p className="font-semibold text-foreground">{link.title}</p>
-                        <p className="text-sm text-foreground/60">{link.size}</p>
-                      </div>
-                      <Button asChild size="sm">
-                        <a href={link.url} target="_blank" rel="noopener noreferrer">
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </a>
-                      </Button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-foreground/60">No download links available yet</p>
-                )}
+                <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
+                <SeasonsSection seasons={movie.seasons} />
               </div>
-            ) : (
-              // Series Downloads
-              <>
-                {movie.seasons && movie.seasons.length > 0 && (
-                  <div className="mb-8">
-                    <label className="block text-sm font-medium text-foreground mb-3">
-                      Select Season
-                    </label>
-                    <Select
-                      value={selectedSeason.toString()}
-                      onValueChange={(v) => setSelectedSeason(parseInt(v))}
-                    >
-                      <SelectTrigger className="w-full md:w-64 bg-background border-border">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card border-border">
-                        {movie.seasons.map((season) => (
-                          <SelectItem key={season.seasonNumber} value={season.seasonNumber.toString()}>
-                            Season {season.seasonNumber}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+            )
+          )}
 
-                {currentSeason ? (
-                  <div className="space-y-4">
-                    {currentSeason.episodes.map((episode) => (
-                      <div key={episode.episodeNumber} className="rounded-lg border border-border bg-card p-4">
-                        <div className="mb-3">
-                          <p className="font-semibold text-foreground">
-                            Episode {episode.episodeNumber}: {episode.title}
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          {episode.downloadLinks.length > 0 ? (
-                            episode.downloadLinks.map((link, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center justify-between rounded bg-background p-3"
-                              >
-                                <div>
-                                  <p className="text-sm font-medium text-foreground">{link.title}</p>
-                                  <p className="text-xs text-foreground/60">{link.size}</p>
-                                </div>
-                                <Button asChild size="sm" variant="outline">
-                                  <a href={link.url} target="_blank" rel="noopener noreferrer">
-                                    <Download className="h-3 w-3" />
-                                  </a>
-                                </Button>
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-xs text-foreground/60">No downloads available</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-foreground/60">No episodes available</p>
-                )}
-              </>
-            )}
-          </div>
+          {/* Screenshots */}
+          {movie.screenshots && movie.screenshots.length > 0 && (
+            <div className="border-t border-border pt-8">
+              <ScreenshotsGallery screenshots={movie.screenshots} title={movie.title} />
+            </div>
+          )}
         </div>
 
-        {/* Screenshots Gallery */}
-        {movie.screenshots && movie.screenshots.length > 1 && (
-          <div className="border-t border-border px-4 py-12 sm:px-6 lg:px-8">
-            <div className="container max-w-7xl mx-auto">
-              <h2 className="mb-8 text-2xl font-bold text-foreground">Screenshots</h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {movie.screenshots.map((screenshot, idx) => (
-                  <div key={idx} className="relative aspect-video overflow-hidden rounded-lg bg-muted">
-                    <Image
-                      src={screenshot}
-                      alt={`${movie.title} screenshot ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Recommended Movies */}
+        <div className="border-t border-border px-4 py-12 sm:px-6 lg:px-8">
+          <div className="container max-w-7xl mx-auto">
+            <RecommendedMovies genres={movie.genres} currentMovieSlug={movie.slug} />
           </div>
-        )}
-
-        {/* Related Movies */}
-        {relatedMovies.length > 0 && (
-          <div className="border-t border-border px-4 py-12 sm:px-6 lg:px-8">
-            <div className="container max-w-7xl mx-auto">
-              <h2 className="mb-8 text-2xl font-bold text-foreground">You Might Also Like</h2>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {relatedMovies.map((relatedMovie) => (
-                  <MovieCard key={relatedMovie._id} {...relatedMovie} />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+        </div>
+      </div>
 
       <Footer />
     </div>
