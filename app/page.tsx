@@ -22,6 +22,7 @@ interface Movie {
 export default function Home() {
   const [newMovies, setNewMovies] = useState<Movie[]>([]);
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
+  const [seriesItems, setSeriesItems] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,8 +39,13 @@ export default function Home() {
         const trendingData = await trendingRes.json();
         setTrendingMovies(trendingData.movies || []);
 
+        // Fetch series list separately (not only trending)
+        const seriesRes = await fetch('/api/movies?type=series&sort=createdAt&limit=10');
+        const seriesData = await seriesRes.json();
+        setSeriesItems(seriesData.movies || []);
+
         // Extract unique genres
-        const allMovies = [...(newData.movies || []), ...(trendingData.movies || [])];
+        const allMovies = [...(newData.movies || []), ...(trendingData.movies || []), ...(seriesData.movies || [])];
         const uniqueGenres = Array.from(
           new Set(allMovies.flatMap((m: Movie) => m.genres))
         ).slice(0, 6) as string[];
@@ -146,9 +152,9 @@ export default function Home() {
                 View All →
               </Link>
             </div>
-            {trendingMovies.filter(m => m.type === 'series').length > 0 ? (
+            {seriesItems.length > 0 ? (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {trendingMovies.filter(m => m.type === 'series').map((movie) => (
+                {seriesItems.map((movie) => (
                   <MovieCard key={movie._id} {...movie} />
                 ))}
               </div>
