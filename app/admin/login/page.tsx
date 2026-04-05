@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
         <div className="rounded-lg border border-border bg-card p-8">
           <div className="mb-8 text-center">
             <div className="mb-4 flex justify-center">
-              <Image src="/logo.svg" alt="Movies Entertainment logo" width={70} height={70} priority />
+              <Image src="/icon.svg" alt="Movies Entertainment logo" width={70} height={70} priority />
             </div>
             <h1 className="text-2xl font-bold text-foreground">Movies Entertainment</h1>
             <p className="mt-2 text-sm text-foreground/60">Admin Panel Login</p>

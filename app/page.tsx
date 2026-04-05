@@ -34,7 +34,7 @@ export default function Home() {
         setNewMovies(newData.movies || []);
 
         // Fetch trending movies
-        const trendingRes = await fetch('/api/movies?sort=views&limit=5');
+        const trendingRes = await fetch('/api/movies?isTrending=true&limit=5');
         const trendingData = await trendingRes.json();
         setTrendingMovies(trendingData.movies || []);
 

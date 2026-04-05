@@ -40,6 +40,14 @@ export async function sendTelegramText(chatId: string | number, text: string) {
   });
 }
 
+export async function copyTelegramMessage(targetChatId: string | number, fromChatId: string | number, messageId: number) {
+  return callTelegramApi('copyMessage', {
+    chat_id: targetChatId,
+    from_chat_id: fromChatId,
+    message_id: messageId,
+  });
+}
+
 export async function setTelegramWebhook(url: string, secretToken?: string) {
   return callTelegramApi('setWebhook', {
     url,

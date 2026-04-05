@@ -51,7 +51,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2 font-bold text-lg text-primary mb-4">
-              <Image src="/logo.svg" alt="Movies Entertainment logo" width={34} height={34} />
+              <Image src="/icon.svg" alt="Movies Entertainment logo" width={34} height={34} />
               <span>Movies Entertainment</span>
             </div>
             <p className="text-sm text-foreground/60">

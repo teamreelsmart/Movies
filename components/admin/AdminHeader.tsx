@@ -32,7 +32,7 @@ export function AdminHeader() {
     <header className="border-b border-border bg-card">
       <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-lg text-primary">
-          <Image src="/logo.svg" alt="Movies Entertainment logo" width={34} height={34} />
+          <Image src="/icon.svg" alt="Movies Entertainment logo" width={34} height={34} />
           <span>Movies Entertainment Admin</span>
         </Link>
 

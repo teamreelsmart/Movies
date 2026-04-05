@@ -32,6 +32,7 @@ export interface IMovie extends Document {
     }>;
   }>;
   views: number;
+  isTrending: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -131,6 +132,10 @@ const movieSchema = new Schema<IMovie>(
     views: {
       type: Number,
       default: 0,
+    },
+    isTrending: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

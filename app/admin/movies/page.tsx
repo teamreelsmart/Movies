@@ -16,6 +16,7 @@ interface Movie {
   views: number;
   imdbRating: number;
   createdAt: string;
+  isTrending?: boolean;
 }
 
 function MoviesManagementContent() {
@@ -54,6 +55,34 @@ function MoviesManagementContent() {
 
     fetchMovies();
   }, [page, type, toast]);
+
+
+  const handleTrendingToggle = async (slug: string, isTrending: boolean) => {
+    try {
+      const res = await fetch(`/api/movies/${slug}/edit`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isTrending: !isTrending }),
+      });
+
+      if (!res.ok) throw new Error('Failed to update trending status');
+
+      setMovies((prev) =>
+        prev.map((m) => (m.slug === slug ? { ...m, isTrending: !isTrending } : m))
+      );
+
+      toast({
+        title: 'Updated',
+        description: `Trending is now ${!isTrending ? 'ON' : 'OFF'}` ,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update trending status',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this?')) return;
@@ -109,6 +138,7 @@ function MoviesManagementContent() {
                       <th className="px-4 py-3 text-left font-semibold text-foreground">Rating</th>
                       <th className="px-4 py-3 text-left font-semibold text-foreground">Views</th>
                       <th className="px-4 py-3 text-left font-semibold text-foreground">Added</th>
+                      <th className="px-4 py-3 text-left font-semibold text-foreground">Trending Now</th>
                       <th className="px-4 py-3 text-right font-semibold text-foreground">Actions</th>
                     </tr>
                   </thead>
@@ -131,6 +161,19 @@ function MoviesManagementContent() {
                         <td className="px-4 py-3 text-foreground/70">{movie.views}</td>
                         <td className="px-4 py-3 text-foreground/70">
                           {new Date(movie.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            type="button"
+                            onClick={() => handleTrendingToggle(movie.slug, Boolean(movie.isTrending))}
+                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                              movie.isTrending
+                                ? 'bg-green-500/15 text-green-600 hover:bg-green-500/25'
+                                : 'bg-muted text-foreground/70 hover:bg-muted/80'
+                            }`}
+                          >
+                            {movie.isTrending ? 'ON' : 'OFF'}
+                          </button>
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
