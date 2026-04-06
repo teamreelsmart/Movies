@@ -7,7 +7,6 @@ import { useParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { DownloadSection } from '@/components/DownloadSection';
-import { SeasonsSection } from '@/components/SeasonsSection';
 import { ScreenshotsGallery } from '@/components/ScreenshotsGallery';
 import { RecommendedMovies } from '@/components/RecommendedMovies';
 import { MovieDetailSkeleton } from '@/components/MovieCardSkeleton';
@@ -243,27 +242,10 @@ export default function MovieDetailPage() {
             </div>
 
             {/* Download Section */}
-            {movie.type === 'movie' ? (
-              <div className="mt-8 space-y-4 border-t border-border pt-8">
-                <h3 className="text-lg font-semibold text-foreground">Download</h3>
-                <DownloadSection links={movie.downloadLinks} />
-              </div>
-            ) : (
-              <>
-                {movie.downloadLinks && movie.downloadLinks.length > 0 && (
-                  <div className="mt-8 space-y-4 border-t border-border pt-8">
-                    <h3 className="text-lg font-semibold text-foreground">Combined Series Download</h3>
-                    <DownloadSection links={movie.downloadLinks} />
-                  </div>
-                )}
-                {movie.seasons && movie.seasons.length > 0 && (
-                  <div className="mt-8 space-y-4 border-t border-border pt-8">
-                    <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
-                    <SeasonsSection seasons={movie.seasons} />
-                  </div>
-                )}
-              </>
-            )}
+            <div className="mt-8 space-y-4 border-t border-border pt-8">
+              <h3 className="text-lg font-semibold text-foreground">Download</h3>
+              <DownloadSection links={movie.downloadLinks} />
+            </div>
 
             {/* Screenshots */}
             {movie.screenshots && movie.screenshots.length > 0 && (
