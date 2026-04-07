@@ -313,3 +313,54 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.15),
     inset 0 -22px 30px rgba(12, 20, 36, 0.5);
 }
+
+/* Global liquid-glass surfaces across cards/panels */
+.bg-card,
+.bg-card\/50,
+.bg-background\/50,
+[class*='rounded-lg'][class*='border-border'],
+[class*='rounded-xl'][class*='border-border'] {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.28)) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  box-shadow:
+    0 18px 40px rgba(82, 125, 210, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -16px 26px rgba(190, 218, 255, 0.22);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+
+.dark .bg-card,
+.dark .bg-card\/50,
+.dark .bg-background\/50,
+.dark [class*='rounded-lg'][class*='border-border'],
+.dark [class*='rounded-xl'][class*='border-border'] {
+  background: linear-gradient(145deg, rgba(24, 35, 56, 0.7), rgba(14, 23, 40, 0.5)) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -18px 28px rgba(10, 18, 33, 0.48);
+}
+
+/* Inputs/controls glass feel */
+input,
+textarea,
+select,
+[data-slot='select-trigger'] {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(234, 244, 255, 0.45)) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 8px 18px rgba(104, 145, 225, 0.14);
+}
+
+.dark input,
+.dark textarea,
+.dark select,
+.dark [data-slot='select-trigger'] {
+  background: linear-gradient(145deg, rgba(24, 35, 56, 0.68), rgba(14, 23, 40, 0.45)) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 20px rgba(0, 0, 0, 0.35);
+}
