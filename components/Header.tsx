@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { SearchBox } from './SearchBox';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="liquid-glass sticky top-0 z-50 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="container flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary flex-shrink-0">
           <Image src="/icon.svg" alt="Movies Entertainment logo" width={34} height={34} priority />
@@ -37,6 +38,7 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="rounded-lg p-2 hover:bg-card transition-colors md:hidden"

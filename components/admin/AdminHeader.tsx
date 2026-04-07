@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogOut, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function AdminHeader() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="border-b border-border bg-card">
+    <header className="liquid-glass border-b border-border bg-card/70 backdrop-blur-xl">
       <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-lg text-primary">
           <Image src="/icon.svg" alt="Movies Entertainment logo" width={34} height={34} />
@@ -52,6 +53,7 @@ export function AdminHeader() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Button asChild variant="ghost" size="sm">
             <Link href="/admin/settings">
               <Settings className="h-4 w-4" />
