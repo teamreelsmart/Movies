@@ -88,7 +88,7 @@ export default function Home() {
         {/* New Added Section */}
         {newMovies.length > 0 && (
           <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
-            <div className="container max-w-7xl mx-auto">
+            <div className="container mx-auto max-w-7xl rounded-2xl border border-border/60 bg-card/50 p-5 liquid-glass sm:p-6">
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-foreground">Newly Added</h2>
                 <Link href="/movies" className="text-sm text-primary hover:underline">
@@ -107,7 +107,7 @@ export default function Home() {
         {/* Trending Section */}
         {trendingMovies.length > 0 && (
           <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
-            <div className="container max-w-7xl mx-auto">
+            <div className="container mx-auto max-w-7xl rounded-2xl border border-border/60 bg-card/50 p-5 liquid-glass sm:p-6">
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-foreground">Trending Now</h2>
                 <Link href="/movies?sort=views" className="text-sm text-primary hover:underline">
@@ -126,14 +126,14 @@ export default function Home() {
         {/* Genres Section */}
         {genres.length > 0 && (
           <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
-            <div className="container max-w-7xl mx-auto">
+            <div className="container mx-auto max-w-7xl rounded-2xl border border-border/60 bg-card/50 p-5 liquid-glass sm:p-6">
               <h2 className="mb-6 text-2xl font-bold text-foreground">Browse by Genre</h2>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {genres.map((genre) => (
                   <Link
                     key={genre}
                     href={`/movies?genre=${encodeURIComponent(genre)}`}
-                    className="group rounded-lg border border-border bg-card px-4 py-3 text-center font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10"
+                    className="group rounded-lg border border-border/70 bg-card/80 px-4 py-3 text-center font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-primary/10 hover:shadow-lg"
                   >
                     {genre}
                   </Link>
@@ -145,7 +145,7 @@ export default function Home() {
 
         {/* Series Section */}
         <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
-          <div className="container max-w-7xl mx-auto">
+          <div className="container mx-auto max-w-7xl rounded-2xl border border-border/60 bg-card/50 p-5 liquid-glass sm:p-6">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-foreground">Web Series</h2>
               <Link href="/series" className="text-sm text-primary hover:underline">

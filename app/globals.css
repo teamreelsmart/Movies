@@ -364,3 +364,48 @@ select,
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     0 10px 20px rgba(0, 0, 0, 0.35);
 }
+
+.poster-liquid-card {
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    0 16px 30px rgba(72, 118, 208, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -20px 24px rgba(193, 219, 255, 0.24);
+}
+
+.dark .poster-liquid-card {
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 18px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -20px 24px rgba(10, 18, 33, 0.5);
+}
+
+.poster-water-ripple {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  transform: translate(-50%, -50%);
+  animation: posterRipple 700ms ease-out forwards;
+  box-shadow: 0 0 0 2px rgba(138, 193, 255, 0.35);
+}
+
+.dark .poster-water-ripple {
+  border-color: rgba(197, 221, 255, 0.88);
+  box-shadow: 0 0 0 2px rgba(69, 118, 189, 0.35);
+}
+
+@keyframes posterRipple {
+  0% {
+    opacity: 0.9;
+    width: 10px;
+    height: 10px;
+  }
+  100% {
+    opacity: 0;
+    width: 180px;
+    height: 180px;
+  }
+}

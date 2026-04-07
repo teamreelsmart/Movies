@@ -14,8 +14,8 @@ export function Header() {
     <header className="liquid-glass sticky top-0 z-50 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="container flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary flex-shrink-0">
-          <Image src="/icon.svg" alt="Movies Entertainment logo" width={34} height={34} priority />
-          <span className="hidden sm:inline">Movies Entertainment</span>
+          <Image src="/icon.svg" alt="OrvixMovies logo" width={34} height={34} priority />
+          <span className="hidden sm:inline">OrvixMovies</span>
         </Link>
 
         {/* Desktop Navigation */}

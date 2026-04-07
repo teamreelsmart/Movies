@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
+import { type MouseEvent, useState } from 'react';
 
 interface MovieCardProps {
   title: string;
@@ -14,10 +17,31 @@ interface MovieCardProps {
 export function MovieCard({ title, slug, posterUrl, imdbRating, type }: MovieCardProps) {
   const canOpenDetail = Boolean(slug);
   const href = canOpenDetail ? `/movie/${encodeURIComponent(slug!)}` : '#';
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  const handlePosterClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!canOpenDetail) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ripple = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+
+    setRipples((prev) => [...prev, ripple]);
+
+    window.setTimeout(() => {
+      setRipples((prev) => prev.filter((item) => item.id !== ripple.id));
+    }, 700);
+  };
 
   return (
     <Link href={href} aria-disabled={!canOpenDetail} className={!canOpenDetail ? 'pointer-events-none' : ''}>
-      <div className="group relative overflow-hidden rounded-lg bg-card transition-transform duration-300 hover:scale-105 cursor-pointer">
+      <div
+        className="poster-liquid-card group relative cursor-pointer overflow-hidden rounded-xl border border-white/60 bg-card transition-transform duration-300 hover:scale-105"
+        onClick={handlePosterClick}
+      >
         <div className="aspect-[2/3] relative bg-muted">
           <Image
             src={posterUrl}
@@ -26,6 +50,15 @@ export function MovieCard({ title, slug, posterUrl, imdbRating, type }: MovieCar
             className="object-cover transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, 300px"
           />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {ripples.map((ripple) => (
+              <span
+                key={ripple.id}
+                className="poster-water-ripple"
+                style={{ left: ripple.x, top: ripple.y }}
+              />
+            ))}
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex flex-col justify-end p-3">
             <p className="text-white font-semibold text-sm line-clamp-2 mb-2">{title}</p>
             {imdbRating > 0 && (
