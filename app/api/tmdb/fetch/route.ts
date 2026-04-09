@@ -18,14 +18,24 @@ interface TmdbApiResponse {
 }
 
 function parseTmdbLink(link: string): { type: TmdbMediaType; id: number } | null {
-  const pattern = /themoviedb\.org\/(movie|tv)\/(\d+)/i;
-  const match = link.match(pattern);
-  if (!match) return null;
+  const clean = link.trim();
 
-  return {
-    type: match[1].toLowerCase() as TmdbMediaType,
-    id: Number(match[2]),
-  };
+  const patterns = [
+    /themoviedb\.org\/(?:[a-z]{2}-[A-Z]{2}\/)?(movie|tv)\/(\d+)/i,
+    /(?:^|\/)(movie|tv)\/(\d+)(?:$|[/?#-])/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = clean.match(pattern);
+    if (match) {
+      return {
+        type: match[1].toLowerCase() as TmdbMediaType,
+        id: Number(match[2]),
+      };
+    }
+  }
+
+  return null;
 }
 
 function normalizeLanguage(code?: string) {
@@ -50,19 +60,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.TMDB_API_KEY) {
+    const hasApiKey = Boolean(process.env.TMDB_API_KEY);
+    const hasAccessToken = Boolean(process.env.TMDB_ACCESS_TOKEN);
+
+    if (!hasApiKey && !hasAccessToken) {
       return NextResponse.json(
-        { error: 'TMDB_API_KEY is not configured on server' },
+        { error: 'TMDB credentials are missing. Set TMDB_API_KEY or TMDB_ACCESS_TOKEN.' },
         { status: 500 }
       );
     }
 
-    const tmdbUrl = `https://api.themoviedb.org/3/${parsed.type}/${parsed.id}?api_key=${process.env.TMDB_API_KEY}&language=en-US`;
-    const response = await fetch(tmdbUrl, { cache: 'no-store' });
+    const tmdbUrl = hasAccessToken
+      ? `https://api.themoviedb.org/3/${parsed.type}/${parsed.id}?language=en-US`
+      : `https://api.themoviedb.org/3/${parsed.type}/${parsed.id}?api_key=${process.env.TMDB_API_KEY}&language=en-US`;
+
+    const response = await fetch(tmdbUrl, {
+      cache: 'no-store',
+      headers: hasAccessToken
+        ? { Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}` }
+        : undefined,
+    });
 
     if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      const errorMessage = errorBody?.status_message || 'TMDB lookup failed';
       return NextResponse.json(
-        { error: 'TMDB lookup failed' },
+        { error: errorMessage },
         { status: response.status }
       );
     }

@@ -125,6 +125,7 @@ function AddMovieContent() {
 
   const fetchFromTmdb = async () => {
     if (!tmdbLink.trim()) {
+      window.alert('Please paste a valid TMDB movie or TV link first.');
       toast({
         title: 'TMDB link required',
         description: 'Please paste a valid TMDB movie or TV link first.',
@@ -166,6 +167,7 @@ function AddMovieContent() {
         description: 'Fields auto-filled. Please enter title and download link manually.',
       });
     } catch (error: any) {
+      window.alert(`TMDB Error: ${error.message || 'Unable to fetch data from TMDB'}`);
       toast({
         title: 'TMDB fetch failed',
         description: error.message || 'Unable to fetch data from TMDB',
