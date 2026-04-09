@@ -45,7 +45,6 @@ function AddMovieContent() {
     availableQualities: ['1080p'],
     type: isSeries ? 'series' : 'movie',
     posterUrl: '',
-    screenshots: [''],
     downloadLinks: [{ title: '', size: '', url: '' }] as DownloadLink[],
     seasons: [],
   });
@@ -378,46 +377,6 @@ function AddMovieContent() {
                 />
               </div>
             </div>
-
-            {/* Screenshots */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h2 className="text-xl font-semibold text-foreground">Screenshots</h2>
-                <Button
-                  type="button"
-                  onClick={() => addArrayItem('screenshots', '')}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Screenshot
-                </Button>
-              </div>
-
-              {formData.screenshots.map((screenshot, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <Input
-                    type="url"
-                    value={screenshot}
-                    onChange={(e) => handleArrayChange('screenshots', idx, '', e.target.value)}
-                    className="bg-background border-border"
-                    placeholder="Screenshot URL"
-                  />
-                  {formData.screenshots.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeArrayItem('screenshots', idx)}
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-
             {/* Submit */}
             <div className="flex gap-2 border-t border-border pt-6">
               <Button type="submit" disabled={loading} size="lg">

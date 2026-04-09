@@ -26,7 +26,6 @@ interface MovieFormData {
   availableQualities: string[];
   type: 'movie' | 'series';
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: DownloadLink[];
   isTrending?: boolean;
 }
@@ -66,7 +65,6 @@ export default function EditMoviePage() {
           availableQualities: data.availableQualities || [],
           type: data.type || 'movie',
           posterUrl: data.posterUrl || '',
-          screenshots: data.screenshots || [''],
           downloadLinks: data.downloadLinks?.length
             ? [{
                 title: data.downloadLinks[0]?.title || '',
@@ -104,7 +102,6 @@ export default function EditMoviePage() {
       const payload = {
         ...formData,
         genres: formData.genres.filter(Boolean),
-        screenshots: formData.screenshots.filter(Boolean),
         downloadLinks: formData.downloadLinks.filter((l) => l.url),
       };
 

@@ -7,7 +7,6 @@ import { useParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { DownloadSection } from '@/components/DownloadSection';
-import { ScreenshotsGallery } from '@/components/ScreenshotsGallery';
 import { RecommendedMovies } from '@/components/RecommendedMovies';
 import { MovieDetailSkeleton } from '@/components/MovieCardSkeleton';
 import { Star, Calendar, Clock, Globe } from 'lucide-react';
@@ -43,7 +42,6 @@ interface Movie {
   availableQualities: string[];
   type: 'movie' | 'series';
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: DownloadLink[];
   seasons: Season[];
   views: number;
@@ -127,21 +125,12 @@ export default function MovieDetailPage() {
         <div className="relative overflow-hidden border-b border-border">
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent z-10"></div>
           <div className="relative h-72 sm:h-[28rem] w-full bg-muted overflow-hidden">
-            {movie.screenshots && movie.screenshots.length > 0 ? (
-              <Image
-                src={movie.screenshots[0]}
-                alt={movie.title}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <Image
-                src={movie.posterUrl}
-                alt={movie.title}
-                fill
-                className="object-cover"
-              />
-            )}
+            <Image
+              src={movie.posterUrl}
+              alt={movie.title}
+              fill
+              className="object-cover"
+            />
           </div>
 
           <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-4 pb-10 pt-16">
@@ -246,13 +235,6 @@ export default function MovieDetailPage() {
               <h3 className="text-lg font-semibold text-foreground">Download</h3>
               <DownloadSection links={movie.downloadLinks} />
             </div>
-
-            {/* Screenshots */}
-            {movie.screenshots && movie.screenshots.length > 0 && (
-              <div className="mt-8 border-t border-border pt-8">
-                <ScreenshotsGallery screenshots={movie.screenshots} title={movie.title} />
-              </div>
-            )}
           </div>
         </div>
 

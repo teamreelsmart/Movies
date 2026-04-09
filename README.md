@@ -72,7 +72,6 @@ A production-ready, full-featured movie and web series platform built with Next.
   SearchBox.tsx
   DownloadSection.tsx
   SeasonsSection.tsx
-  ScreenshotsGallery.tsx
   RecommendedMovies.tsx
 
 /lib
@@ -177,7 +176,6 @@ A production-ready, full-featured movie and web series platform built with Next.
   availableQualities: string[];
   type: "movie" | "series";
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: [{
     title: string;
     size: string;
