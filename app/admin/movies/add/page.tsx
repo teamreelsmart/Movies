@@ -32,6 +32,8 @@ function AddMovieContent() {
   const { toast } = useToast();
   const isSeries = searchParams.get('type') === 'series';
   const [loading, setLoading] = useState(false);
+  const [tmdbLink, setTmdbLink] = useState('');
+  const [fetchingTmdb, setFetchingTmdb] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -121,6 +123,59 @@ function AddMovieContent() {
     }
   };
 
+  const fetchFromTmdb = async () => {
+    if (!tmdbLink.trim()) {
+      toast({
+        title: 'TMDB link required',
+        description: 'Please paste a valid TMDB movie or TV link first.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setFetchingTmdb(true);
+
+    try {
+      const res = await fetch('/api/tmdb/fetch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: tmdbLink.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch TMDB data');
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        storyline: data.storyline || prev.storyline,
+        imdbRating: Number(data.imdbRating || 0),
+        releaseDate: data.releaseDate || prev.releaseDate,
+        genres: data.genres?.length ? data.genres : prev.genres,
+        language: data.language || prev.language,
+        runtime: data.runtime || prev.runtime,
+        qualityType: data.qualityType || prev.qualityType,
+        availableQualities: data.availableQualities?.length ? data.availableQualities : prev.availableQualities,
+        type: data.tmdbType || prev.type,
+        posterUrl: data.posterUrl || prev.posterUrl,
+      }));
+
+      toast({
+        title: 'TMDB data fetched',
+        description: 'Fields auto-filled. Please enter title and download link manually.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'TMDB fetch failed',
+        description: error.message || 'Unable to fetch data from TMDB',
+        variant: 'destructive',
+      });
+    } finally {
+      setFetchingTmdb(false);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <AdminHeader />
@@ -139,6 +194,29 @@ function AddMovieContent() {
               <h2 className="text-xl font-semibold text-foreground border-b border-border pb-3">
                 Basic Information
               </h2>
+
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="tmdbLink">TMDB Link (Auto Fill)</FieldLabel>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Input
+                      id="tmdbLink"
+                      value={tmdbLink}
+                      onChange={(e) => setTmdbLink(e.target.value)}
+                      className="bg-background border-border"
+                      placeholder="https://www.themoviedb.org/movie/12345 or /tv/12345"
+                    />
+                    <Button
+                      type="button"
+                      onClick={fetchFromTmdb}
+                      disabled={fetchingTmdb}
+                      className="sm:w-auto"
+                    >
+                      {fetchingTmdb ? 'Fetching...' : 'Fetch'}
+                    </Button>
+                  </div>
+                </Field>
+              </FieldGroup>
 
               <FieldGroup>
                 <Field>

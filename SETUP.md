@@ -64,6 +64,7 @@ CHANNEL_ID=your_telegram_channel_id
 NEXT_PUBLIC_BASE_URL=https://your-domain.com
 TELEGRAM_WEBHOOK_SECRET=any_long_random_secret
 TELEGRAM_WEBHOOK_URL=https://your-domain.com/api/telegram/webhook
+TMDB_API_KEY=your_tmdb_v3_api_key
 ```
 
 ### 3. MongoDB Setup
