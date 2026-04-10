@@ -62,6 +62,10 @@ ADMIN_PASSWORD=your_password
 BOT_TOKEN=your_telegram_bot_token
 CHANNEL_ID=your_telegram_channel_id
 NEXT_PUBLIC_BASE_URL=https://your-domain.com
+TELEGRAM_WEBHOOK_SECRET=any_long_random_secret
+TELEGRAM_WEBHOOK_URL=https://your-domain.com/api/telegram/webhook
+TMDB_API_KEY=your_tmdb_v3_api_key
+TMDB_ACCESS_TOKEN=optional_tmdb_v4_read_access_token
 ```
 
 ### 3. MongoDB Setup
@@ -77,7 +81,16 @@ NEXT_PUBLIC_BASE_URL=https://your-domain.com
 2. Get your bot token
 3. Create a channel and make the bot an admin
 4. Get your channel ID (use @userinfobot to find it)
-5. Add both to `.env.local`
+5. Add bot env values to `.env.local`
+6. Set `NEXT_PUBLIC_BASE_URL` or explicit `TELEGRAM_WEBHOOK_URL`
+7. (Recommended) set `TELEGRAM_WEBHOOK_SECRET` for secure webhook verification
+8. Login as admin and call `POST /api/telegram/webhook/register` once to register webhook
+
+Bot webhook command behavior:
+- `/start`: welcome + command menu
+- `/help`: command usage help
+- `/latest`: sends latest 5 uploaded movies/series from MongoDB
+- `/search <keyword>`: searches title and returns top matches with links
 
 ## Running the Project
 
@@ -182,6 +195,30 @@ npm run start
 **PUT /api/settings**
 - Requires: Authentication
 - Body: `{ footerLinks: [...] }`
+
+### Telegram Webhook
+
+**GET /api/telegram/webhook**
+- Returns: Webhook status + supported commands
+
+**POST /api/telegram/webhook**
+- Telegram webhook endpoint for incoming bot updates
+- Validates `x-telegram-bot-api-secret-token` when `TELEGRAM_WEBHOOK_SECRET` is set
+
+**POST /api/telegram/webhook/register**
+- Requires: Admin authentication
+- Registers webhook URL at Telegram Bot API using `TELEGRAM_WEBHOOK_URL` or `NEXT_PUBLIC_BASE_URL`
+
+**GET /api/telegram/webhook/register**
+- Requires: Admin authentication
+- Returns current Telegram webhook info
+
+#### Supported Bot Commands
+- `/start`
+- `/help`
+- `/latest`
+- `/search <keyword>`
+
 
 ## Admin Panel
 
@@ -310,6 +347,8 @@ Ensure Node.js 18+ and add environment variables to your hosting platform.
 - Verify BOT_TOKEN and CHANNEL_ID
 - Ensure bot is admin in channel
 - Check bot has permission to post
+- For webhook mode, verify TELEGRAM_WEBHOOK_SECRET + TELEGRAM_WEBHOOK_URL
+- Hit `GET /api/telegram/webhook/register` to inspect webhook status
 
 ### "Admin login not working"
 - Clear browser cookies

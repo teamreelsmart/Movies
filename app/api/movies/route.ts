@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const genre = searchParams.get('genre');
     const language = searchParams.get('language');
     const sort = searchParams.get('sort') || 'createdAt';
+    const isTrending = searchParams.get('isTrending');
 
     const skip = (page - 1) * limit;
     const filter: any = {};
@@ -20,6 +21,7 @@ export async function GET(req: NextRequest) {
     if (type) filter.type = type;
     if (genre) filter.genres = genre;
     if (language) filter.language = language;
+    if (isTrending !== null) filter.isTrending = isTrending === 'true';
 
     const movies = await Movie.find(filter)
       .sort({ [sort]: -1 })

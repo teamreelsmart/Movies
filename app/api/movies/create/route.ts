@@ -40,15 +40,23 @@ export async function POST(req: NextRequest) {
 
     // Send Telegram notification
     const movieUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/movie/${slug}`;
-    await sendTelegramNotification(
-      data.title,
-      data.storyline,
-      data.posterUrl,
+    const telegramSent = await sendTelegramNotification({
+      title: data.title,
+      imdbRating: data.imdbRating,
+      releaseDate: data.releaseDate,
+      genres: data.genres,
+      language: data.language,
+      runtime: data.runtime,
+      qualityType: data.qualityType,
+      posterUrl: data.posterUrl,
       movieUrl,
-      data.type
-    );
+      type: data.type,
+    });
 
-    return NextResponse.json(movie, { status: 201 });
+    return NextResponse.json({
+      ...movie.toObject(),
+      telegramNotificationSent: telegramSent,
+    }, { status: 201 });
   } catch (error) {
     console.error('Movie creation error:', error);
     return NextResponse.json(

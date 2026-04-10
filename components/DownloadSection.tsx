@@ -1,8 +1,6 @@
 'use client';
 
-import { Download, Copy, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface DownloadLink {
   title: string;
@@ -15,58 +13,65 @@ interface DownloadSectionProps {
 }
 
 export function DownloadSection({ links }: DownloadSectionProps) {
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [isPreparingDownload, setIsPreparingDownload] = useState(false);
+  const redirectTimeoutRef = useRef<number | null>(null);
 
-  const handleCopy = (url: string, index: number) => {
-    navigator.clipboard.writeText(url);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
+  const link = links?.find((item) => item?.url)?.url
+    ? links.find((item) => item?.url)
+    : null;
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        window.clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleDownloadClick = () => {
+    if (!link?.url || isPreparingDownload) return;
+
+    setIsPreparingDownload(true);
+    redirectTimeoutRef.current = window.setTimeout(() => {
+      window.location.href = link.url;
+    }, 5000);
   };
 
-  if (!links || links.length === 0) {
+  if (!link) {
     return (
       <div className="rounded-lg border border-border bg-card p-6">
-        <p className="text-foreground/60">No download links available</p>
+        <p className="text-foreground/60">No download link available</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {links.map((link, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+    <>
+      <div className="download-wrap">
+        <button
+          type="button"
+          className="download-button"
+          onClick={handleDownloadClick}
+          disabled={isPreparingDownload}
         >
-          <div className="flex-1">
-            <p className="font-medium text-foreground">{link.title}</p>
-            <p className="text-sm text-foreground/60">{link.size}</p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleCopy(link.url, index)}
-            >
-              {copiedIndex === index ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              asChild
-              variant="default"
-              size="sm"
-            >
-              <a href={link.url} target="_blank" rel="noopener noreferrer">
-                <Download className="h-4 w-4 mr-1" />
-                Download
-              </a>
-            </Button>
+          {link.title || 'Download Now'}
+        </button>
+        {link.size && <p className="mt-4 text-sm text-foreground/70 text-center">{link.size}</p>}
+      </div>
+
+      {isPreparingDownload && (
+        <div className="download-loader-overlay">
+          <div className="download-loader-shell">
+            <div className="download-loader-dashes" aria-hidden="true">
+              <div className="download-dash uno"></div>
+              <div className="download-dash dos"></div>
+              <div className="download-dash tres"></div>
+              <div className="download-dash cuatro"></div>
+            </div>
+            <p className="download-loader-text">Getting Your Requested Files</p>
           </div>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }

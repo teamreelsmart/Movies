@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Button } from '@/components/ui/button';
 import { DownloadSection } from '@/components/DownloadSection';
-import { SeasonsSection } from '@/components/SeasonsSection';
-import { ScreenshotsGallery } from '@/components/ScreenshotsGallery';
 import { RecommendedMovies } from '@/components/RecommendedMovies';
 import { MovieDetailSkeleton } from '@/components/MovieCardSkeleton';
 import { Star, Calendar, Clock, Globe } from 'lucide-react';
@@ -44,22 +42,29 @@ interface Movie {
   availableQualities: string[];
   type: 'movie' | 'series';
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: DownloadLink[];
   seasons: Season[];
   views: number;
 }
 
-export default function MovieDetailPage({ params }: { params: { slug: string } }) {
+export default function MovieDetailPage() {
+  const params = useParams<{ slug?: string }>();
+  const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
+
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSeason, setSelectedSeason] = useState<number>(1);
   const [relatedMovies, setRelatedMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
+    if (!slug) {
+      setLoading(false);
+      return;
+    }
+
     const fetchMovie = async () => {
       try {
-        const res = await fetch(`/api/movies/${params.slug}`);
+        const safeSlug = encodeURIComponent(slug);
+        const res = await fetch(`/api/movies/${safeSlug}`);
         if (!res.ok) {
           throw new Error('Movie not found');
         }
@@ -74,7 +79,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
           );
           const relData = await relRes.json();
           setRelatedMovies(
-            (relData.movies || []).filter((m: Movie) => m.slug !== params.slug).slice(0, 5)
+            (relData.movies || []).filter((m: Movie) => m.slug !== data.slug).slice(0, 5)
           );
         }
       } catch (error) {
@@ -85,7 +90,7 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
     };
 
     fetchMovie();
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -104,14 +109,12 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
       <div className="flex flex-col min-h-screen bg-background">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-foreground/60">Movie not found</p>
+          <p className="text-foreground/60">Movie or Series not found</p>
         </div>
         <Footer />
       </div>
     );
   }
-
-  const currentSeason = movie.seasons?.find((s) => s.seasonNumber === selectedSeason);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -120,23 +123,26 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
       <main className="flex-1">
         {/* Hero Section */}
         <div className="relative overflow-hidden border-b border-border">
-          <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10"></div>
-          <div className="relative h-64 sm:h-96 w-full bg-muted overflow-hidden">
-            {movie.screenshots && movie.screenshots.length > 0 ? (
-              <Image
-                src={movie.screenshots[0]}
-                alt={movie.title}
-                fill
-                className="object-cover"
-              />
-            ) : (
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent z-10"></div>
+          <div className="relative h-72 sm:h-[28rem] w-full bg-muted overflow-hidden">
+            <Image
+              src={movie.posterUrl}
+              alt={movie.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-4 pb-10 pt-16">
+            <div className="relative h-56 w-40 overflow-hidden rounded-2xl border border-white/35 bg-white/10 shadow-2xl backdrop-blur-xl sm:h-72 sm:w-52">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-white/5 to-transparent" />
               <Image
                 src={movie.posterUrl}
-                alt={movie.title}
+                alt={`${movie.title} poster`}
                 fill
                 className="object-cover"
               />
-            )}
+            </div>
           </div>
         </div>
 
@@ -225,26 +231,10 @@ export default function MovieDetailPage({ params }: { params: { slug: string } }
             </div>
 
             {/* Download Section */}
-            {movie.type === 'movie' ? (
-              <div className="mt-8 space-y-4 border-t border-border pt-8">
-                <h3 className="text-lg font-semibold text-foreground">Download</h3>
-                <DownloadSection links={movie.downloadLinks} />
-              </div>
-            ) : (
-              movie.seasons && movie.seasons.length > 0 && (
-                <div className="mt-8 space-y-4 border-t border-border pt-8">
-                  <h3 className="text-lg font-semibold text-foreground">Episodes</h3>
-                  <SeasonsSection seasons={movie.seasons} />
-                </div>
-              )
-            )}
-
-            {/* Screenshots */}
-            {movie.screenshots && movie.screenshots.length > 0 && (
-              <div className="mt-8 border-t border-border pt-8">
-                <ScreenshotsGallery screenshots={movie.screenshots} title={movie.title} />
-              </div>
-            )}
+            <div className="mt-8 space-y-4 border-t border-border pt-8">
+              <h3 className="text-lg font-semibold text-foreground">Download</h3>
+              <DownloadSection links={movie.downloadLinks} />
+            </div>
           </div>
         </div>
 

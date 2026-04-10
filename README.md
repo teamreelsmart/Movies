@@ -72,7 +72,6 @@ A production-ready, full-featured movie and web series platform built with Next.
   SearchBox.tsx
   DownloadSection.tsx
   SeasonsSection.tsx
-  ScreenshotsGallery.tsx
   RecommendedMovies.tsx
 
 /lib
@@ -116,6 +115,8 @@ A production-ready, full-featured movie and web series platform built with Next.
    - `BOT_TOKEN`: Telegram bot token
    - `CHANNEL_ID`: Telegram channel ID for notifications
    - `NEXT_PUBLIC_BASE_URL`: Your application URL
+   - `TELEGRAM_WEBHOOK_SECRET` (optional but recommended): Secret token to validate Telegram webhook calls
+   - `TELEGRAM_WEBHOOK_URL` (optional): Full webhook URL (fallback: `${NEXT_PUBLIC_BASE_URL}/api/telegram/webhook`)
 
 3. **Run Development Server**
    ```bash
@@ -152,6 +153,12 @@ A production-ready, full-featured movie and web series platform built with Next.
 - `GET /api/settings` - Get platform settings
 - `PUT /api/settings` - Update settings (admin only)
 
+### Telegram Webhook
+- `GET /api/telegram/webhook` - Webhook health + supported commands
+- `POST /api/telegram/webhook` - Telegram updates receiver (webhook endpoint)
+- `POST /api/telegram/webhook/register` - Register webhook in Telegram (admin only)
+- `GET /api/telegram/webhook/register` - Get current webhook info from Telegram (admin only)
+
 ## Database Schema
 
 ### Movies Collection
@@ -169,7 +176,6 @@ A production-ready, full-featured movie and web series platform built with Next.
   availableQualities: string[];
   type: "movie" | "series";
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: [{
     title: string;
     size: string;

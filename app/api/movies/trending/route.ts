@@ -8,14 +8,14 @@ export async function GET(request: NextRequest) {
 
     const limit = Number(request.nextUrl.searchParams.get('limit')) || 10;
 
-    const movies = await Movie.find()
-      .sort({ views: -1 })
+    const movies = await Movie.find({ isTrending: true })
+      .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
 
     return NextResponse.json({
       movies,
-      total: await Movie.countDocuments(),
+      total: await Movie.countDocuments({ isTrending: true }),
     });
   } catch (error) {
     console.error('Trending movies error:', error);

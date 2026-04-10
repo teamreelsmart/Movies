@@ -123,3 +123,394 @@
     @apply bg-background text-foreground;
   }
 }
+
+.download-wrap {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.download-button {
+  min-width: 300px;
+  min-height: 60px;
+  display: inline-flex;
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #313133;
+  background: linear-gradient(90deg, rgba(129, 230, 217, 1) 0%, rgba(79, 209, 197, 1) 100%);
+  border: none;
+  border-radius: 1000px;
+  box-shadow: 12px 12px 24px rgba(79, 209, 197, 0.64);
+  transition: all 0.3s ease-in-out 0s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 10px 20px;
+}
+
+.download-button::before {
+  content: '';
+  border-radius: 1000px;
+  min-width: calc(300px + 12px);
+  min-height: calc(60px + 12px);
+  border: 6px solid #00ffcb;
+  box-shadow: 0 0 60px rgba(0, 255, 203, 0.64);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.3s ease-in-out 0s;
+}
+
+.download-button:hover,
+.download-button:focus {
+  color: #313133;
+  transform: translateY(-6px);
+}
+
+.download-button:hover::before,
+.download-button:focus::before {
+  opacity: 1;
+}
+
+.download-button::after {
+  content: '';
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  border: 6px solid #00ffcb;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: download-ring 1.5s infinite;
+}
+
+.download-button:hover::after,
+.download-button:focus::after {
+  animation: none;
+  display: none;
+}
+
+@keyframes download-ring {
+  0% {
+    width: 30px;
+    height: 30px;
+    opacity: 1;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .download-button {
+    min-width: 240px;
+    min-height: 56px;
+    font-size: 18px;
+  }
+
+  .download-button::before {
+    min-width: calc(240px + 12px);
+    min-height: calc(56px + 12px);
+  }
+}
+
+.liquid-glass {
+  background: color-mix(in oklab, var(--background) 78%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 65%, white 35%);
+  box-shadow:
+    0 10px 30px color-mix(in oklab, var(--foreground) 8%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+
+.dark .liquid-glass {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background:
+    radial-gradient(1200px 700px at 8% -10%, rgba(255, 255, 255, 0.95), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(191, 230, 255, 0.45), transparent 52%),
+    linear-gradient(180deg, #f7fbff 0%, #edf4ff 45%, #e9f0ff 100%);
+}
+
+.dark body {
+  background:
+    radial-gradient(900px 520px at 0% 0%, rgba(76, 120, 204, 0.18), transparent 55%),
+    radial-gradient(1100px 720px at 100% 0%, rgba(124, 87, 255, 0.18), transparent 58%),
+    linear-gradient(180deg, #090d18 0%, #0b1220 45%, #0e1628 100%);
+}
+
+.liquid-button {
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(227, 240, 255, 0.65));
+  box-shadow:
+    0 10px 25px rgba(84, 136, 222, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -8px 16px rgba(175, 208, 255, 0.35);
+  color: #102544;
+  backdrop-filter: blur(10px) saturate(140%);
+}
+
+.liquid-button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 16px 30px rgba(84, 136, 222, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -10px 18px rgba(175, 208, 255, 0.4);
+}
+
+.dark .liquid-button {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(52, 73, 111, 0.55), rgba(36, 55, 89, 0.35));
+  color: #e8f1ff;
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -10px 20px rgba(33, 52, 89, 0.5);
+}
+
+.dark .liquid-button:hover {
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -12px 24px rgba(20, 33, 58, 0.55);
+}
+
+.liquid-glass {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.32));
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 12px 30px rgba(109, 157, 235, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -20px 28px rgba(187, 216, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+.dark .liquid-glass {
+  background: linear-gradient(145deg, rgba(26, 40, 64, 0.72), rgba(17, 27, 47, 0.52));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -22px 30px rgba(12, 20, 36, 0.5);
+}
+
+/* Global liquid-glass surfaces across cards/panels */
+.bg-card,
+.bg-card\/50,
+.bg-background\/50,
+[class*='rounded-lg'][class*='border-border'],
+[class*='rounded-xl'][class*='border-border'] {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.28)) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  box-shadow:
+    0 18px 40px rgba(82, 125, 210, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -16px 26px rgba(190, 218, 255, 0.22);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+
+.dark .bg-card,
+.dark .bg-card\/50,
+.dark .bg-background\/50,
+.dark [class*='rounded-lg'][class*='border-border'],
+.dark [class*='rounded-xl'][class*='border-border'] {
+  background: linear-gradient(145deg, rgba(24, 35, 56, 0.7), rgba(14, 23, 40, 0.5)) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -18px 28px rgba(10, 18, 33, 0.48);
+}
+
+/* Inputs/controls glass feel */
+input,
+textarea,
+select,
+[data-slot='select-trigger'] {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(234, 244, 255, 0.45)) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 8px 18px rgba(104, 145, 225, 0.14);
+}
+
+.dark input,
+.dark textarea,
+.dark select,
+.dark [data-slot='select-trigger'] {
+  background: linear-gradient(145deg, rgba(24, 35, 56, 0.68), rgba(14, 23, 40, 0.45)) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.poster-liquid-card {
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    0 16px 30px rgba(72, 118, 208, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -20px 24px rgba(193, 219, 255, 0.24);
+}
+
+.dark .poster-liquid-card {
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 18px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -20px 24px rgba(10, 18, 33, 0.5);
+}
+
+.poster-water-ripple {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  transform: translate(-50%, -50%);
+  animation: posterRipple 700ms ease-out forwards;
+  box-shadow: 0 0 0 2px rgba(138, 193, 255, 0.35);
+}
+
+.dark .poster-water-ripple {
+  border-color: rgba(197, 221, 255, 0.88);
+  box-shadow: 0 0 0 2px rgba(69, 118, 189, 0.35);
+}
+
+@keyframes posterRipple {
+  0% {
+    opacity: 0.9;
+    width: 10px;
+    height: 10px;
+  }
+  100% {
+    opacity: 0;
+    width: 180px;
+    height: 180px;
+  }
+}
+
+.download-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: rgba(6, 10, 18, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.download-loader-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  padding: 34px 22px;
+}
+
+.download-loader-dashes {
+  display: flex;
+}
+
+.download-dash {
+  margin: 0 15px;
+  width: 35px;
+  height: 15px;
+  border-radius: 8px;
+  background: #ff2cbd;
+  box-shadow: 0 0 10px 0 #fecdff;
+}
+
+.download-loader-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.uno {
+  margin-right: -18px;
+  transform-origin: center left;
+  animation: loader-spin 3s linear infinite;
+}
+
+.dos {
+  transform-origin: center right;
+  animation: loader-spin2 3s linear infinite;
+  animation-delay: 0.2s;
+}
+
+.tres {
+  transform-origin: center right;
+  animation: loader-spin3 3s linear infinite;
+  animation-delay: 0.3s;
+}
+
+.cuatro {
+  transform-origin: center right;
+  animation: loader-spin4 3s linear infinite;
+  animation-delay: 0.4s;
+}
+
+@keyframes loader-spin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(360deg); }
+  30% { transform: rotate(370deg); }
+  35% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loader-spin2 {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(0deg); }
+  30% { transform: rotate(-180deg); }
+  35% { transform: rotate(-190deg); }
+  40% { transform: rotate(-180deg); }
+  78% { transform: rotate(-180deg); }
+  95% { transform: rotate(-360deg); }
+  98% { transform: rotate(-370deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes loader-spin3 {
+  0% { transform: rotate(0deg); }
+  27% { transform: rotate(0deg); }
+  40% { transform: rotate(180deg); }
+  45% { transform: rotate(190deg); }
+  50% { transform: rotate(180deg); }
+  62% { transform: rotate(180deg); }
+  75% { transform: rotate(360deg); }
+  80% { transform: rotate(370deg); }
+  85% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loader-spin4 {
+  0% { transform: rotate(0deg); }
+  38% { transform: rotate(0deg); }
+  60% { transform: rotate(-360deg); }
+  65% { transform: rotate(-370deg); }
+  75% { transform: rotate(-360deg); }
+  100% { transform: rotate(-360deg); }
+}

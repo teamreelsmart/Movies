@@ -32,6 +32,8 @@ function AddMovieContent() {
   const { toast } = useToast();
   const isSeries = searchParams.get('type') === 'series';
   const [loading, setLoading] = useState(false);
+  const [tmdbLink, setTmdbLink] = useState('');
+  const [fetchingTmdb, setFetchingTmdb] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -45,9 +47,8 @@ function AddMovieContent() {
     availableQualities: ['1080p'],
     type: isSeries ? 'series' : 'movie',
     posterUrl: '',
-    screenshots: [''],
     downloadLinks: [{ title: '', size: '', url: '' }] as DownloadLink[],
-    seasons: isSeries ? [{ seasonNumber: 1, episodes: [{ episodeNumber: 1, title: '', downloadLinks: [{ title: '', size: '', url: '' }] }] }] : [],
+    seasons: [],
   });
 
   const handleChange = (field: string, value: any) => {
@@ -88,6 +89,7 @@ function AddMovieContent() {
     }));
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -121,6 +123,61 @@ function AddMovieContent() {
     }
   };
 
+  const fetchFromTmdb = async () => {
+    if (!tmdbLink.trim()) {
+      window.alert('Please paste a valid TMDB movie or TV link first.');
+      toast({
+        title: 'TMDB link required',
+        description: 'Please paste a valid TMDB movie or TV link first.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setFetchingTmdb(true);
+
+    try {
+      const res = await fetch('/api/tmdb/fetch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: tmdbLink.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch TMDB data');
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        storyline: data.storyline || prev.storyline,
+        imdbRating: Number(data.imdbRating || 0),
+        releaseDate: data.releaseDate || prev.releaseDate,
+        genres: data.genres?.length ? data.genres : prev.genres,
+        language: data.language || prev.language,
+        runtime: data.runtime || prev.runtime,
+        qualityType: data.qualityType || prev.qualityType,
+        availableQualities: data.availableQualities?.length ? data.availableQualities : prev.availableQualities,
+        type: data.tmdbType || prev.type,
+        posterUrl: data.posterUrl || prev.posterUrl,
+      }));
+
+      toast({
+        title: 'TMDB data fetched',
+        description: 'Fields auto-filled. Please enter title and download link manually.',
+      });
+    } catch (error: any) {
+      window.alert(`TMDB Error: ${error.message || 'Unable to fetch data from TMDB'}`);
+      toast({
+        title: 'TMDB fetch failed',
+        description: error.message || 'Unable to fetch data from TMDB',
+        variant: 'destructive',
+      });
+    } finally {
+      setFetchingTmdb(false);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <AdminHeader />
@@ -139,6 +196,29 @@ function AddMovieContent() {
               <h2 className="text-xl font-semibold text-foreground border-b border-border pb-3">
                 Basic Information
               </h2>
+
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="tmdbLink">TMDB Link (Auto Fill)</FieldLabel>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Input
+                      id="tmdbLink"
+                      value={tmdbLink}
+                      onChange={(e) => setTmdbLink(e.target.value)}
+                      className="bg-background border-border"
+                      placeholder="https://www.themoviedb.org/movie/12345 or /tv/12345"
+                    />
+                    <Button
+                      type="button"
+                      onClick={fetchFromTmdb}
+                      disabled={fetchingTmdb}
+                      className="sm:w-auto"
+                    >
+                      {fetchingTmdb ? 'Fetching...' : 'Fetch'}
+                    </Button>
+                  </div>
+                </Field>
+              </FieldGroup>
 
               <FieldGroup>
                 <Field>
@@ -330,107 +410,53 @@ function AddMovieContent() {
               </div>
             </div>
 
-            {/* Download Links */}
+            {/* Download Link */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h2 className="text-xl font-semibold text-foreground">
-                  {isSeries ? 'Download Links (for trailer)' : 'Download Links'} *
-                </h2>
-                <Button
-                  type="button"
-                  onClick={() => addArrayItem('downloadLinks', { title: '', size: '', url: '' })}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Link
-                </Button>
+              <div className="border-b border-border pb-3">
+                <h2 className="text-xl font-semibold text-foreground">Download Link *</h2>
               </div>
 
-              {formData.downloadLinks.map((link, idx) => (
-                <div key={idx} className="space-y-2 rounded-lg border border-border bg-background/50 p-4">
-                  <Input
-                    value={link.title}
-                    onChange={(e) =>
-                      handleArrayChange('downloadLinks', idx, 'title', e.target.value)
-                    }
-                    className="bg-background border-border"
-                    placeholder="Link title (e.g., '1080p BluRay')"
-                  />
-                  <div className="grid gap-2 md:grid-cols-2">
-                    <Input
-                      value={link.size}
-                      onChange={(e) =>
-                        handleArrayChange('downloadLinks', idx, 'size', e.target.value)
-                      }
-                      className="bg-background border-border"
-                      placeholder="File size (e.g., '2.5 GB')"
-                    />
-                    <Input
-                      type="url"
-                      value={link.url}
-                      onChange={(e) =>
-                        handleArrayChange('downloadLinks', idx, 'url', e.target.value)
-                      }
-                      className="bg-background border-border"
-                      placeholder="Download URL"
-                    />
-                  </div>
-                  {formData.downloadLinks.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeArrayItem('downloadLinks', idx)}
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Remove
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Screenshots */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h2 className="text-xl font-semibold text-foreground">Screenshots</h2>
-                <Button
-                  type="button"
-                  onClick={() => addArrayItem('screenshots', '')}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Screenshot
-                </Button>
+              <div className="space-y-2 rounded-lg border border-border bg-background/50 p-4">
+                <Input
+                  value={formData.downloadLinks[0]?.title || ''}
+                  onChange={(e) =>
+                    handleChange('downloadLinks', [{
+                      title: e.target.value,
+                      size: formData.downloadLinks[0]?.size || '',
+                      url: formData.downloadLinks[0]?.url || '',
+                    }])
+                  }
+                  className="bg-background border-border"
+                  placeholder="Button title (e.g., Download Now)"
+                />
+                <Input
+                  value={formData.downloadLinks[0]?.size || ''}
+                  onChange={(e) =>
+                    handleChange('downloadLinks', [{
+                      title: formData.downloadLinks[0]?.title || '',
+                      size: e.target.value,
+                      url: formData.downloadLinks[0]?.url || '',
+                    }])
+                  }
+                  className="bg-background border-border"
+                  placeholder="Optional text (size/quality)"
+                />
+                <Input
+                  type="url"
+                  value={formData.downloadLinks[0]?.url || ''}
+                  onChange={(e) =>
+                    handleChange('downloadLinks', [{
+                      title: formData.downloadLinks[0]?.title || '',
+                      size: formData.downloadLinks[0]?.size || '',
+                      url: e.target.value,
+                    }])
+                  }
+                  required
+                  className="bg-background border-border"
+                  placeholder="Single download URL"
+                />
               </div>
-
-              {formData.screenshots.map((screenshot, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <Input
-                    type="url"
-                    value={screenshot}
-                    onChange={(e) => handleArrayChange('screenshots', idx, '', e.target.value)}
-                    className="bg-background border-border"
-                    placeholder="Screenshot URL"
-                  />
-                  {formData.screenshots.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeArrayItem('screenshots', idx)}
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
             </div>
-
             {/* Submit */}
             <div className="flex gap-2 border-t border-border pt-6">
               <Button type="submit" disabled={loading} size="lg">

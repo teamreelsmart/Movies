@@ -13,7 +13,6 @@ export interface IMovie extends Document {
   availableQualities: string[];
   type: 'movie' | 'series';
   posterUrl: string;
-  screenshots: string[];
   downloadLinks: Array<{
     title: string;
     size: string;
@@ -32,6 +31,7 @@ export interface IMovie extends Document {
     }>;
   }>;
   views: number;
+  isTrending: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,10 +93,6 @@ const movieSchema = new Schema<IMovie>(
       type: String,
       required: true,
     },
-    screenshots: {
-      type: [String],
-      default: [],
-    },
     downloadLinks: {
       type: [
         {
@@ -131,6 +127,10 @@ const movieSchema = new Schema<IMovie>(
     views: {
       type: Number,
       default: 0,
+    },
+    isTrending: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
